@@ -1,0 +1,27 @@
+[Unit]
+Description=Update DNS Service
+ConditionPathExists=/home/pi/.bin/updatedns
+After=network.target
+ 
+[Service]
+Type=simple
+User=pi
+Group=pi
+LimitNOFILE=1024
+
+Restart=always
+RestartSec=3
+StartLimitIntervalSec=30
+StartLimitBurst=5
+
+WorkingDirectory=/home/pi
+ExecStart=/home/pi/.bin/updatedns
+
+# make sure log directory exists and owned by syslog
+PermissionsStartOnly=true
+#StandardOutput=syslog
+#StandardError=syslog
+#SyslogIdentifier=updatedns
+ 
+[Install]
+WantedBy=multi-user.target

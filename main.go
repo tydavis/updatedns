@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"os/user"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"github.com/tydavis/gobundledhttp"
@@ -82,14 +83,24 @@ func updateDNS(u, p string) (err error) {
 func main() {
 	// setup signal catching
 	sigs := make(chan os.Signal, 1)
-	// catch all signals since not explicitly listing
-	signal.Notify(sigs)
-	//signal.Notify(sigs,syscall.SIGQUIT)
-	// method invoked upon seeing signal
+	// Explicitly catch these signals
+	signal.Notify(sigs, os.Interrupt, syscall.SIGQUIT, syscall.SIGTERM)
 	go func() {
 		s := <-sigs
-		log.Printf("RECEIVED SIGNAL: %s", s)
-		os.Exit(1)
+		switch s {
+		case syscall.SIGQUIT:
+			log.Printf("RECEIVED QUIT: %s", s)
+			os.Exit(0)
+		case syscall.SIGTERM:
+			log.Printf("RECEIVED TERM: %s", s)
+			os.Exit(0)
+		case os.Interrupt:
+			log.Printf("RECEIVED INTERRUPT: %s", s)
+			os.Exit(0)
+		default:
+			log.Printf("RECEIVED SIGNAL: %s", s)
+			os.Exit(1)
+		}
 	}()
 
 	// Get creds and set up timers
