@@ -66,11 +66,14 @@ func updateDNS(u, p string) (err error) {
 	c := gobundledhttp.NewClient()
 	c.Timeout = 15 * time.Second
 
-	_, err = c.Do(req)
+	resp, err := c.Do(req)
 	if err != nil {
 		log.Printf("failed to update Google DNS")
 		return err
 	}
+	result, _ := ioutil.ReadAll(resp.Body) // Don't actually care, if it succeeds
+	resp.Body.Close()
+	log.Printf("Updated DNS: %s", result)
 
 	return
 }
