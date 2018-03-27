@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
+	"path/filepath"
 	"time"
 
 	"github.com/tydavis/gobundledhttp"
@@ -18,9 +20,12 @@ type dnscreds struct {
 }
 
 func getCreds() dnscreds {
-	//
 	var ds dnscreds
-	jf, err := os.Open("~/.credentials/dnscreds")
+	// Expand the home directory to get the proper file path
+	usr, _ := user.Current()
+	dir := usr.HomeDir
+	fp := filepath.Join(dir, ".credentials", "dnscreds")
+	jf, err := os.Open(fp)
 	if err != nil {
 		log.Fatalf("Failure to access credentials: %v", err)
 	}
