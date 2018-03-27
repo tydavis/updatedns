@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
 	"os/user"
 	"path/filepath"
 	"time"
@@ -79,14 +80,25 @@ func updateDNS(u, p string) (err error) {
 }
 
 func main() {
+	// setup signal catching
+	sigs := make(chan os.Signal, 1)
+	// catch all signals since not explicitly listing
+	signal.Notify(sigs)
+	//signal.Notify(sigs,syscall.SIGQUIT)
+	// method invoked upon seeing signal
+	go func() {
+		s := <-sigs
+		log.Printf("RECEIVED SIGNAL: %s", s)
+		os.Exit(1)
+	}()
 
+	// Get creds and set up timers
 	creds := getCreds()
-
 	tick := time.Tick(3 * time.Minute)
-
-	// Update DNS during first operation
+	// Update DNS immediately
 	_ = updateDNS(creds.Username, creds.Password)
 
+	// Forever loop waiting for ticker
 	for {
 		select {
 		case <-tick:
