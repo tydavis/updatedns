@@ -42,13 +42,13 @@ func getCreds() dnscreds {
 
 func restartNetwork() (ok bool, err error) {
 	// Reload the daemon because otherwise we can't restart network
-	daemonReload := exec.Command("systemctl", "daemon-reload")
+	daemonReload := exec.Command("sudo", "systemctl", "daemon-reload")
 	_, err = daemonReload.CombinedOutput()
 	if err != nil {
 		log.Printf("Could not reload daemon. %v \n Continuing", err)
 	}
 	// Restart the Pi's network
-	netRestart := exec.Command("systemctl", "restart", "network.service")
+	netRestart := exec.Command("sudo", "systemctl", "restart", "networking.service")
 	_, err = netRestart.CombinedOutput()
 	if err != nil {
 		log.Printf("Failed to restart network: %v", err)
