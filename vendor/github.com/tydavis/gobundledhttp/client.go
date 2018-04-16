@@ -8,6 +8,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"net/http"
+	"time"
 
 	"github.com/tydavis/gobundledhttp/certificates"
 	"golang.org/x/oauth2"
@@ -23,6 +24,7 @@ func init() {
 
 func NewClient() *http.Client {
 	return &http.Client{
+		Timeout: 10 * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				RootCAs: pool,
@@ -45,6 +47,7 @@ func CtxBundled() context.Context {
 func InsecureClient() *http.Client {
 	// Insecure client without cert-trust checking
 	return &http.Client{
+		Timeout: 10 * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				RootCAs:            pool,

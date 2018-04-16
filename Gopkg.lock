@@ -14,7 +14,7 @@
     ".",
     "certificates"
   ]
-  revision = "01487cf87a95f74cb332eb35dd5f15fc9453c397"
+  revision = "0de90d579f9e8a80e5e20fef1196adfb63b566d3"
 
 [[projects]]
   branch = "master"
@@ -23,7 +23,7 @@
     "context",
     "context/ctxhttp"
   ]
-  revision = "6078986fec03a1dcc236c34816c71b0e05018fda"
+  revision = "500e7a4f953ddaf55d316b4d3adc516aa0379622"
 
 [[projects]]
   branch = "master"
@@ -32,7 +32,7 @@
     ".",
     "internal"
   ]
-  revision = "fdc9e635145ae97e6c2cb777c48305600cf515cb"
+  revision = "921ae394b9430ed4fb549668d7b087601bd60a81"
 
 [[projects]]
   name = "google.golang.org/appengine"
