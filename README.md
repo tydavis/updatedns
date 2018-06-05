@@ -35,3 +35,9 @@ sudo cp updatedns.service /lib/systemd/system/
 sudo systemctl enable updatedns.service
 sudo systemctl start updatedns.service
 ```
+
+### Getting logs
+
+```bash
+sudo journalctl -u updatedns.service
+```
