@@ -1,0 +1,10 @@
+github.com/golang/protobuf v1.0.0 h1:lsek0oXi8iFE9L+EXARyHIjU5rlWIhhTkjDz3vHhWWQ=
+github.com/golang/protobuf v1.0.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+github.com/tydavis/gobundledhttp v0.0.0-20180413182257-0de90d579f9e h1:FPc9Wwa8CtQ1HyuxML6v9HH8Hjh1Gy7rODulS3whJZw=
+github.com/tydavis/gobundledhttp v0.0.0-20180413182257-0de90d579f9e/go.mod h1:eeDGjKa8OHqCW/AD/iv9ssysLHH3ckL/YxRvLgXydQg=
+golang.org/x/net v0.0.0-20180415214307-500e7a4f953d h1:YbPBOQdSo5fFDiZgBDcltE4XjtOLk2wUw16mtGFpoOg=
+golang.org/x/net v0.0.0-20180415214307-500e7a4f953d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+golang.org/x/oauth2 v0.0.0-20180402223937-921ae394b943 h1:hE+k6oRG1aru6/y8A0HI01Zqp65EZcUcKToTkbPsFFM=
+golang.org/x/oauth2 v0.0.0-20180402223937-921ae394b943/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+google.golang.org/appengine v1.0.0 h1:dN4LljjBKVChsv0XCSI+zbyzdqrkEwX5LQFUMRSGqOc=
+google.golang.org/appengine v1.0.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
