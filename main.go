@@ -24,17 +24,23 @@ type dnscreds struct {
 func getCreds() dnscreds {
 	var ds dnscreds
 	// Expand the home directory to get the proper file path
-	usr, _ := user.Current()
+	usr, e := user.Current()
+	if e != nil {
+		log.Fatalf("unable to get current user: %v", e)
+	}
 	dir := usr.HomeDir
 	fp := filepath.Join(dir, ".credentials", "dnscreds")
 	jf, err := os.Open(fp)
 	if err != nil {
-		log.Fatalf("Failure to access credentials: %v", err)
+		log.Fatalf("failure to access credentials: %v", err)
 	}
-	b, _ := ioutil.ReadAll(jf)
+	b, e := ioutil.ReadAll(jf)
+	if e != nil {
+		log.Fatalf("unable to read credentials file: %v", e)
+	}
 	err = json.Unmarshal(b, &ds)
 	if err != nil {
-		log.Fatalf("Unable to unmarshal creds: %v", err)
+		log.Fatalf("unable to unmarshal creds: %v", err)
 	}
 
 	return ds
@@ -57,24 +63,17 @@ func restartNetwork() (ok bool, err error) {
 	return true, nil
 }
 
-func updateDNS(u, p string) (err error) {
-	req, err := http.NewRequest("GET", "https://domains.google.com/nic/update?hostname=home.gluecode.net", nil)
-	if err != nil {
-		log.Printf("unable to create request: %v", err)
-		return err
-	}
-	req.SetBasicAuth(u, p)
-
-	c := gobundledhttp.NewClient()
-	c.Timeout = 15 * time.Second
-
+func updateDNS(c *http.Client, req *http.Request) (err error) {
 	resp, err := c.Do(req)
 	if err != nil {
 		log.Printf("failed to update Google DNS")
 		return err
 	}
-	result, _ := ioutil.ReadAll(resp.Body) // Don't actually care, if it succeeds
-	resp.Body.Close()
+	result, err := ioutil.ReadAll(resp.Body) // Don't actually care, if it succeeds
+	defer resp.Body.Close()
+	if err != nil {
+		log.Fatalln("unable to read request response body: %v", err)
+	}
 	log.Printf("Updated DNS: %s", result)
 
 	return
@@ -106,22 +105,38 @@ func main() {
 	// Get creds and set up timers
 	creds := getCreds()
 	tick := time.Tick(3 * time.Minute)
+
+	// Build Request
+	req, err := http.NewRequest("GET", "https://domains.google.com/nic/update?hostname=home.gluecode.net", nil)
+	if err != nil {
+		log.Fatalf("unable to create request: %v", err)
+	}
+	req.SetBasicAuth(creds.Username, creds.Password)
+
+	c := gobundledhttp.NewClient()
+
 	// Update DNS immediately
-	_ = updateDNS(creds.Username, creds.Password)
+	err = updateDNS(c, req)
+	if err != nil {
+		log.Fatalf("catastrophic error: %v", err)
+	}
 
 	// Forever loop waiting for ticker
 	for {
 		select {
 		case <-tick:
 			// Every 3 minutes, attempt to update DNS. Restart network
-			err := updateDNS(creds.Username, creds.Password)
+			err := updateDNS(c, req)
 			if err != nil {
 				ok, e := restartNetwork()
 				if e != nil {
 					log.Printf("catastrophic error: %v", e)
 				}
 				if ok {
-					updateDNS(creds.Username, creds.Password)
+					err := updateDNS(c, req)
+					if err != nil {
+						log.Fatalf("failed to update after network restart: %v", err)
+					}
 				}
 			}
 		default:
