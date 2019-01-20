@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -101,6 +103,17 @@ func main() {
 			os.Exit(1)
 		}
 	}()
+
+	// Mandatory profiling endpoint on an alternate (never directly exposed) port.
+	// Put this on an alternate goroutine to avoid locking/blocking operations
+	// where possible.
+	go func() {
+		// Need it to bind to all interfaces, not just localhost
+		hp := fmt.Sprintf("127.0.0.1:%d", 6060)
+		log.Printf("starting debug endpoint at %s ", hp)
+		// Log server output to avoid silently dying / failing creating endpoint.
+		log.Println(http.ListenAndServe(hp, nil))
+	}() // End debug endpoint.
 
 	// Get creds and set up timers
 	creds := getCreds()
