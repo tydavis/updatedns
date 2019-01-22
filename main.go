@@ -71,7 +71,7 @@ func updateDNS(c *http.Client, req *http.Request) (err error) {
 		log.Printf("failed to update Google DNS")
 		return err
 	}
-	result, err := ioutil.ReadAll(resp.Body) // Don't actually care, if it succeeds
+	result, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if err != nil {
 		log.Fatalln("unable to read request response body: %v", err)
